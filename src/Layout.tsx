@@ -3,8 +3,10 @@ import { Outlet } from "react-router-dom";
 const Layout = () => {
   return (
     <>
-      <header className="sticky top-0 w-full py-3 bg-background px-3 sm:px-0">
-        <nav className="container px-4 py-3 mx-auto bg-white">Pokebox</nav>
+      <header className="sticky top-0 w-full py-3 px-3 sm:px-0 bg-blur">
+        <nav className="container px-4 py-3 mx-auto bg-darkGray text-lg rounded-lg text-white">
+          Pokebox
+        </nav>
       </header>
 
       <main className="container px-4 mx-auto">
@@ -12,8 +14,8 @@ const Layout = () => {
       </main>
 
       <footer className="my-4 px-3 sm:px-3">
-        <div className="container px-4 py-3 mx-auto bg-white">
-          <p className="text-center text-xs">© 2024 Pokebox</p>
+        <div className="container px-4 py-3 mx-auto bg-darkGray rounded-lg">
+          <p className="text-center text-white">© 2024 Pokebox</p>
         </div>
       </footer>
     </>

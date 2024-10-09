@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       backgroundColor: {
-        background: "#e7e7e7",
-        primary: "#F4EBA7",
+        background: "#4d6f95",
+        darkGray: "#192538",
       },
     },
   },
