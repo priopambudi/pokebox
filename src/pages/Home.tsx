@@ -11,8 +11,10 @@ const Home = () => {
   const { allPoke, loading, error } = usePokemonContext();
 
   useEffect(() => {
-    fetchData(getAllPoke);
-  }, []);
+    if (allPoke.length === 0) {
+      fetchData(getAllPoke);
+    }
+  }, [allPoke.length]);
 
   const handleLoadMore = () => {
     loadMore(getAllPoke);

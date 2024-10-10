@@ -1,9 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Card = ({ data }: any) => {
+  const navigate = useNavigate();
+
+  const handleNavigate = (pokemon: any) => {
+    navigate("/detail/" + pokemon.id, { state: { pokemon } }); // Mengirimkan state saat navigasi
+  };
+
   return (
-    <Link
-      to={"/"}
+    <div
+      onClick={() => handleNavigate(data)}
       id="card"
       className="rounded-md hover:scale-105 transition-all"
     >
@@ -31,7 +37,7 @@ const Card = ({ data }: any) => {
           ))}
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 

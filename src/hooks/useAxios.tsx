@@ -11,11 +11,12 @@ export interface propsAxiosRequest extends AxiosRequestConfig {
 }
 
 const useAxios = () => {
-  const [page, setPage] = useState<number>(0);
-  const [loadingLoadMore, setLoadingLoadMore] = useState<boolean>(true);
+  // const [page, setPage] = useState<number>(0);
+  const [loadingLoadMore, setLoadingLoadMore] = useState<boolean>(false);
   const controller = new AbortController();
 
-  const { setLoading, setError, allPoke, setAllPoke } = usePokemonContext();
+  const { setLoading, setError, allPoke, setAllPoke, page, setPage } =
+    usePokemonContext();
 
   const axiosInstance = axios.create();
 
@@ -45,7 +46,7 @@ const useAxios = () => {
       } else {
         params.isSearch ? setAllPoke([res.data]) : setAllPoke(res.data);
       }
-      setPage((prev) => prev + 1);
+      setPage(page + 1);
     } catch (error: AxiosError | unknown) {
       if (axios.isAxiosError(error)) {
         setError(error.response);

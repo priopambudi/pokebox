@@ -8,6 +8,8 @@ interface PokemonContextType {
   error: any;
   setLoading: (loading: boolean) => void;
   setError: (error: any) => void;
+  page: number;
+  setPage: (data: number) => void;
 }
 
 const PokemonContext = createContext<PokemonContextType | null>(null);
@@ -18,6 +20,7 @@ export const PokemonProvider: React.FC<{ children: ReactNode }> = ({
   const [allPoke, setAllPoke] = useState<PokeDetailInterface[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<any>(null);
+  const [page, setPage] = useState<number>(0);
   //   const [detailPoke, setDetailPoke] = useState<PokeDetailInterface | null>(
   //     null
   //   );
@@ -31,6 +34,8 @@ export const PokemonProvider: React.FC<{ children: ReactNode }> = ({
         error,
         setLoading,
         setError,
+        page,
+        setPage,
       }}
     >
       {children}
