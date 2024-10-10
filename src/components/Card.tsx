@@ -22,7 +22,12 @@ const Card = ({ data }: any) => {
         <p className="text-center text-white mt-4 text-xl">{data.name}</p>
         <div className="flex items-center justify-center gap-2 mx-auto mt-3">
           {data.types.map((item: any) => (
-            <p className="bg-white px-2 rounded-md">{item.type.name}</p>
+            <p
+              key={item.slot}
+              className="bg-gradient-to-br from-[#56c6f8] to-[#5759fc] text-white px-2 line-clamp-1 rounded-md"
+            >
+              {item.type.name}
+            </p>
           ))}
         </div>
       </div>

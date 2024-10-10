@@ -1,8 +1,9 @@
 import { Outlet } from "react-router-dom";
+import { PokemonProvider } from "./context/PokeContext";
 
 const Layout = () => {
   return (
-    <>
+    <PokemonProvider>
       <header className="sticky top-0 w-full py-3 px-3 sm:px-0 bg-blur">
         <nav className="container px-4 py-3 mx-auto bg-darkGray text-lg rounded-lg text-white">
           Pokebox
@@ -18,7 +19,7 @@ const Layout = () => {
           <p className="text-center text-white">© 2024 Pokebox</p>
         </div>
       </footer>
-    </>
+    </PokemonProvider>
   );
 };
 

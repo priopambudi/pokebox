@@ -3,7 +3,7 @@ import { propsAxiosRequest } from "../hooks/useAxios";
 const getAllPoke: propsAxiosRequest = {
   method: "GET",
   url: "/pokemon",
-  isGetDetail: true,
+  isGetAllDetail: true,
 };
 
 const getPokeDetail = (id: number): propsAxiosRequest => ({
