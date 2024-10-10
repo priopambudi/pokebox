@@ -11,7 +11,6 @@ export interface propsAxiosRequest extends AxiosRequestConfig {
 }
 
 const useAxios = () => {
-  // const [page, setPage] = useState<number>(0);
   const [loadingLoadMore, setLoadingLoadMore] = useState<boolean>(false);
   const controller = new AbortController();
 
