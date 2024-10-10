@@ -6,7 +6,7 @@ const getAllPoke: propsAxiosRequest = {
   isGetAllDetail: true,
 };
 
-const getPokeDetail = (id: number): propsAxiosRequest => ({
+const getPokeDetail = (id: string): propsAxiosRequest => ({
   method: "GET",
   url: `/api/pokemon/${id}`,
 });

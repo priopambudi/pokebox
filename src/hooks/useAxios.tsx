@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { useState } from "react";
 import { usePokemonContext } from "../context/PokeContext";
 import { PokeGeneralInterface } from "../interfaces/pokeInterface";
+import { getPokeDetail } from "../api/poke";
 
 export interface propsAxiosRequest extends AxiosRequestConfig {
   isGetAllDetail?: boolean;
@@ -32,9 +33,7 @@ const useAxios = () => {
         const pokemonDetails = await Promise.all(
           res.data.results.map(async (pokemon: PokeGeneralInterface) => {
             const id = pokemon.url.split("/")[6];
-            const detailResponse = await axiosInstance({
-              url: `/api/pokemon/${id}`,
-            });
+            const detailResponse = await axiosInstance(getPokeDetail(id));
             return detailResponse.data;
           })
         );
