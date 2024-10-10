@@ -49,10 +49,8 @@ const useAxios = () => {
     } catch (error: AxiosError | unknown) {
       if (axios.isAxiosError(error)) {
         setError(error.response);
-        console.error("Axios error:", error.response);
       } else {
         setError(error);
-        console.error("Unknown error:", error);
       }
     } finally {
       setLoading(false);
