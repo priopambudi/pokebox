@@ -7,7 +7,7 @@ import Button from "./Button";
 const Search = () => {
   const [value, setValue] = useState<string>("");
   const { data, fetchData } = useAxios();
-  const { addData, addDataSearch, clearData } = usePokemonContext();
+  const { addData, addDataSearch } = usePokemonContext();
   const [isInputTouched, setIsInputTouched] = useState<boolean>(false);
 
   useEffect(() => {

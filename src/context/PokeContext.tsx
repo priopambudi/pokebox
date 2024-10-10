@@ -6,6 +6,10 @@ interface PokemonContextType {
   addData: (item: PokeDetailInterface[], fromSearch?: boolean) => void;
   addDataSearch: (item: PokeDetailInterface) => void;
   clearData: () => void;
+  loading: boolean;
+  error: any;
+  setLoading: (loading: boolean) => void;
+  setError: (error: any) => void;
 }
 
 const PokemonContext = createContext<PokemonContextType | null>(null);
@@ -14,6 +18,8 @@ export const PokemonProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [allPoke, setAllPoke] = useState<PokeDetailInterface[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<any>(null);
   //   const [detailPoke, setDetailPoke] = useState<PokeDetailInterface | null>(
   //     null
   //   );
@@ -35,7 +41,16 @@ export const PokemonProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <PokemonContext.Provider
-      value={{ allPoke, addData, addDataSearch, clearData }}
+      value={{
+        allPoke,
+        addData,
+        addDataSearch,
+        clearData,
+        loading,
+        error,
+        setLoading,
+        setError,
+      }}
     >
       {children}
     </PokemonContext.Provider>

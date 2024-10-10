@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { useEffect, useState } from "react";
-import { PokeDetailInterface } from "../interfaces/pokeInterface";
+import { usePokemonContext } from "../context/PokeContext";
 
 export interface propsAxiosRequest extends AxiosRequestConfig {
   isGetAllDetail?: boolean;
@@ -11,17 +11,20 @@ type PokeData<T> = T | null;
 
 const useAxios = () => {
   const [data, setData] = useState<PokeData<any>>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<AxiosError | unknown>(null);
   const [page, setPage] = useState<number>(0);
   const [loadingLoadMore, setLoadingLoadMore] = useState<boolean>(true);
   const controller = new AbortController();
+
+  const { setLoading, setError } = usePokemonContext();
 
   const axiosInstance = axios.create({
     baseURL: "https://pokeapi.co/api/v2",
   });
 
   const fetchData = async (params: propsAxiosRequest) => {
+    setLoading(true);
+    setError(null);
+
     try {
       const res = await axiosInstance({
         ...params,
@@ -45,9 +48,11 @@ const useAxios = () => {
       setPage((prev) => prev + 1);
     } catch (error: AxiosError | unknown) {
       if (axios.isAxiosError(error)) {
-        setError(error);
+        setError(error.response);
+        console.error("Axios error:", error.response);
       } else {
         setError(error);
+        console.error("Unknown error:", error);
       }
     } finally {
       setLoading(false);
@@ -68,14 +73,14 @@ const useAxios = () => {
   };
 
   useEffect(() => {
-    const source = axios.CancelToken.source();
+    const source = new AbortController();
 
     return () => {
-      source.cancel("Component unmounted: Request cancelled.");
+      source.abort();
     };
   }, []);
 
-  return { data, loading, error, loadMore, loadingLoadMore, fetchData };
+  return { data, loadMore, loadingLoadMore, fetchData };
 };
 
 export default useAxios;

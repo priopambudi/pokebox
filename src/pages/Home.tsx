@@ -7,9 +7,8 @@ import Button from "../components/Button";
 import Loading from "../components/Loading";
 
 const Home = () => {
-  const { data, loading, error, loadMore, loadingLoadMore, fetchData } =
-    useAxios();
-  const { allPoke, addData } = usePokemonContext();
+  const { data, loadMore, loadingLoadMore, fetchData } = useAxios();
+  const { allPoke, addData, loading, error } = usePokemonContext();
 
   useEffect(() => {
     fetchData(getAllPoke);
@@ -25,13 +24,15 @@ const Home = () => {
     loadMore(getAllPoke);
   };
 
-  if (loading)
+  if (loading && !loadingLoadMore)
     return (
       <div className="flex justify-center mt-6">
         <Loading />
       </div>
     );
-  if (error) return <p>Error</p>;
+
+  if (error)
+    return <p className="text-xl text-white font-bold">{error.data}</p>;
 
   return (
     <section>
