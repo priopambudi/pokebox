@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: process.env.VITE_POKE_API,
+        target: "https://pokeapi.co/api/v2",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""), // Menghapus prefix /api
       },
