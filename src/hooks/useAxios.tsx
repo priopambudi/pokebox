@@ -2,26 +2,35 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { useEffect, useState } from "react";
 import { PokeDetailInterface } from "../interfaces/pokeInterface";
 
-axios.defaults.baseURL = "https://pokeapi.co/api/v2";
-
 export interface propsAxiosRequest extends AxiosRequestConfig {
   isGetAllDetail?: boolean;
+  isSearch?: boolean;
 }
 
-const useAxios = (axiosParams: propsAxiosRequest) => {
-  const [data, setData] = useState<PokeDetailInterface[] | null>(null);
+type PokeData<T> = T | null;
+
+const useAxios = () => {
+  const [data, setData] = useState<PokeData<any>>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<AxiosError | unknown>(null);
   const [page, setPage] = useState<number>(0);
   const [loadingLoadMore, setLoadingLoadMore] = useState<boolean>(true);
   const controller = new AbortController();
 
+  const axiosInstance = axios.create({
+    baseURL: "https://pokeapi.co/api/v2",
+  });
+
   const fetchData = async (params: propsAxiosRequest) => {
     try {
-      const res = await axios.request({
+      const res = await axiosInstance({
         ...params,
         signal: controller.signal,
       });
+      if (params.isSearch) {
+        setData(null);
+      }
+
       if (params.isGetAllDetail) {
         const pokemonDetails = await Promise.all(
           res.data.results.map(async (pokemon: any) => {
@@ -46,16 +55,10 @@ const useAxios = (axiosParams: propsAxiosRequest) => {
     }
   };
 
-  useEffect(() => {
-    fetchData(axiosParams);
-
-    return () => controller.abort();
-  }, [axiosParams]);
-
-  const loadMore = () => {
+  const loadMore = (params: propsAxiosRequest) => {
     setLoadingLoadMore(true);
     let newParams = {
-      ...axiosParams,
+      ...params,
       params: {
         offset: page * 20,
         limit: 20,
@@ -64,7 +67,15 @@ const useAxios = (axiosParams: propsAxiosRequest) => {
     fetchData(newParams);
   };
 
-  return { data, loading, error, loadMore, loadingLoadMore };
+  useEffect(() => {
+    const source = axios.CancelToken.source();
+
+    return () => {
+      source.cancel("Component unmounted: Request cancelled.");
+    };
+  }, []);
+
+  return { data, loading, error, loadMore, loadingLoadMore, fetchData };
 };
 
 export default useAxios;

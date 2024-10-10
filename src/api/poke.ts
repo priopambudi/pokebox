@@ -11,4 +11,10 @@ const getPokeDetail = (id: number): propsAxiosRequest => ({
   url: `/pokemon/${id}`,
 });
 
-export { getAllPoke, getPokeDetail };
+const searchPoke = (name: string): propsAxiosRequest => ({
+  method: "GET",
+  url: `/pokemon/${name}`,
+  isSearch: true,
+});
+
+export { getAllPoke, getPokeDetail, searchPoke };

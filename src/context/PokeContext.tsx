@@ -3,7 +3,9 @@ import { PokeDetailInterface } from "../interfaces/pokeInterface";
 
 interface PokemonContextType {
   allPoke: PokeDetailInterface[];
-  addData: (item: PokeDetailInterface[]) => void;
+  addData: (item: PokeDetailInterface[], fromSearch?: boolean) => void;
+  addDataSearch: (item: PokeDetailInterface) => void;
+  clearData: () => void;
 }
 
 const PokemonContext = createContext<PokemonContextType | null>(null);
@@ -16,12 +18,25 @@ export const PokemonProvider: React.FC<{ children: ReactNode }> = ({
   //     null
   //   );
 
-  const addData = (item: PokeDetailInterface[]) => {
-    setAllPoke([...allPoke, ...item]);
+  const addData = (
+    item: PokeDetailInterface[],
+    fromSearch: boolean = false
+  ) => {
+    setAllPoke(fromSearch ? [...item] : [...allPoke, ...item]);
+  };
+
+  const addDataSearch = (item: PokeDetailInterface) => {
+    setAllPoke([item]);
+  };
+
+  const clearData = () => {
+    setAllPoke([]);
   };
 
   return (
-    <PokemonContext.Provider value={{ allPoke, addData }}>
+    <PokemonContext.Provider
+      value={{ allPoke, addData, addDataSearch, clearData }}
+    >
       {children}
     </PokemonContext.Provider>
   );
