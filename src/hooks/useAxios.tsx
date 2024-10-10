@@ -1,24 +1,22 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { usePokemonContext } from "../context/PokeContext";
 
 export interface propsAxiosRequest extends AxiosRequestConfig {
   isGetAllDetail?: boolean;
   isSearch?: boolean;
+  loadMorePoke?: boolean;
 }
 
-type PokeData<T> = T | null;
-
 const useAxios = () => {
-  const [data, setData] = useState<PokeData<any>>(null);
   const [page, setPage] = useState<number>(0);
   const [loadingLoadMore, setLoadingLoadMore] = useState<boolean>(true);
   const controller = new AbortController();
 
-  const { setLoading, setError } = usePokemonContext();
+  const { setLoading, setError, allPoke, setAllPoke } = usePokemonContext();
 
   const axiosInstance = axios.create({
-    baseURL: "https://pokeapi.co/api/v2",
+    baseURL: import.meta.env.VITE_POKE_API,
   });
 
   const fetchData = async (params: propsAxiosRequest) => {
@@ -30,9 +28,6 @@ const useAxios = () => {
         ...params,
         signal: controller.signal,
       });
-      if (params.isSearch) {
-        setData(null);
-      }
 
       if (params.isGetAllDetail) {
         const pokemonDetails = await Promise.all(
@@ -41,9 +36,13 @@ const useAxios = () => {
             return detailResponse.data;
           })
         );
-        setData(pokemonDetails);
+        if (params.loadMorePoke) {
+          setAllPoke([...allPoke, ...pokemonDetails]);
+        } else {
+          setAllPoke(pokemonDetails);
+        }
       } else {
-        setData(res.data);
+        params.isSearch ? setAllPoke([res.data]) : setAllPoke(res.data);
       }
       setPage((prev) => prev + 1);
     } catch (error: AxiosError | unknown) {
@@ -60,25 +59,18 @@ const useAxios = () => {
 
   const loadMore = (params: propsAxiosRequest) => {
     setLoadingLoadMore(true);
-    let newParams = {
+    let newParams: propsAxiosRequest = {
       ...params,
       params: {
         offset: page * 20,
         limit: 20,
       },
+      loadMorePoke: true,
     };
     fetchData(newParams);
   };
 
-  useEffect(() => {
-    const source = new AbortController();
-
-    return () => {
-      source.abort();
-    };
-  }, []);
-
-  return { data, loadMore, loadingLoadMore, fetchData };
+  return { loadMore, loadingLoadMore, fetchData };
 };
 
 export default useAxios;

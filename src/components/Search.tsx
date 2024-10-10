@@ -1,22 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getAllPoke, searchPoke } from "../api/poke";
 import useAxios from "../hooks/useAxios";
-import { usePokemonContext } from "../context/PokeContext";
 import Button from "./Button";
+
+import close from "../assets/img/cross.png";
 
 const Search = () => {
   const [value, setValue] = useState<string>("");
-  const { data, fetchData } = useAxios();
-  const { addData, addDataSearch } = usePokemonContext();
+  const { fetchData } = useAxios();
   const [isInputTouched, setIsInputTouched] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (data && value !== "") {
-      addDataSearch(data);
-    } else if (data && isInputTouched) {
-      addData(data, true);
-    }
-  }, [data]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -31,12 +23,27 @@ const Search = () => {
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
-      <input
-        type="text"
-        placeholder="Type Poke name"
-        onChange={(e) => setValue(e.target.value)}
-        className="px-2 py-1 text-xs outline-none rounded-lg text-black"
-      />
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Type Poke name"
+          onChange={(e) => setValue(e.target.value)}
+          className="pl-3 pr-5 py-1 text-xs outline-none rounded-lg text-black h-full"
+          value={value}
+        />
+        {value.trim() && (
+          <img
+            src={close}
+            alt="close icon"
+            width={16}
+            className="absolute top-0 translate-y-1/2 right-2 cursor-pointer"
+            onClick={() => {
+              fetchData(getAllPoke);
+              setValue("");
+            }}
+          />
+        )}
+      </div>
       <Button type={"submit"} className="py-0 line-clamp-1 text-base">
         Search
       </Button>

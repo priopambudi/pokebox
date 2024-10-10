@@ -7,18 +7,12 @@ import Button from "../components/Button";
 import Loading from "../components/Loading";
 
 const Home = () => {
-  const { data, loadMore, loadingLoadMore, fetchData } = useAxios();
-  const { allPoke, addData, loading, error } = usePokemonContext();
+  const { loadMore, loadingLoadMore, fetchData } = useAxios();
+  const { allPoke, loading, error } = usePokemonContext();
 
   useEffect(() => {
     fetchData(getAllPoke);
   }, []);
-
-  useEffect(() => {
-    if (data) {
-      addData(data);
-    }
-  }, [data]);
 
   const handleLoadMore = () => {
     loadMore(getAllPoke);
