@@ -2,18 +2,18 @@ import { propsAxiosRequest } from "../hooks/useAxios";
 
 const getAllPoke: propsAxiosRequest = {
   method: "GET",
-  url: "/pokemon",
+  url: "/api/pokemon",
   isGetAllDetail: true,
 };
 
 const getPokeDetail = (id: number): propsAxiosRequest => ({
   method: "GET",
-  url: `/pokemon/${id}`,
+  url: `/api/pokemon/${id}`,
 });
 
 const searchPoke = (name: string): propsAxiosRequest => ({
   method: "GET",
-  url: `/pokemon/${name}`,
+  url: `/api/pokemon/${name}`,
   isSearch: true,
 });
 

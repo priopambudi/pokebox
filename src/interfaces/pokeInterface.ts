@@ -1,3 +1,8 @@
+export interface PokeGeneralInterface {
+  name: string;
+  url: string;
+}
+
 export interface PokeDetailInterface {
   abilities: Ability[];
   base_experience: number;
