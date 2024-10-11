@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { useState } from "react";
 import { usePokemonContext } from "../context/PokeContext";
 import { PokeGeneralInterface } from "../interfaces/pokeInterface";
-import { getPokeDetail } from "../api/poke";
+import { getEvolution, getPokeDetailById } from "../api/poke";
 
 export interface propsAxiosRequest extends AxiosRequestConfig {
   isGetAllDetail?: boolean;
@@ -14,8 +14,15 @@ const useAxios = () => {
   const [loadingLoadMore, setLoadingLoadMore] = useState<boolean>(false);
   const controller = new AbortController();
 
-  const { setLoading, setError, allPoke, setAllPoke, page, setPage } =
-    usePokemonContext();
+  const {
+    setLoading,
+    setError,
+    allPoke,
+    setAllPoke,
+    page,
+    setPage,
+    setDetailPoke,
+  } = usePokemonContext();
 
   const axiosInstance = axios.create();
 
@@ -33,7 +40,7 @@ const useAxios = () => {
         const pokemonDetails = await Promise.all(
           res.data.results.map(async (pokemon: PokeGeneralInterface) => {
             const id = pokemon.url.split("/")[6];
-            const detailResponse = await axiosInstance(getPokeDetail(id));
+            const detailResponse = await axiosInstance(getPokeDetailById(id));
             return detailResponse.data;
           })
         );
@@ -71,7 +78,43 @@ const useAxios = () => {
     fetchData(newParams);
   };
 
-  return { loadMore, loadingLoadMore, fetchData };
+  const fetchSPecies = async (params: propsAxiosRequest) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await axiosInstance({
+        ...params,
+        signal: controller.signal,
+      });
+
+      const [detailResponse, evolutionProcess] = await Promise.all([
+        axiosInstance(getPokeDetailById(res.data.id)),
+        axiosInstance(getEvolution(res.data.id)),
+      ]);
+
+      const pokemonDetail = detailResponse.data;
+      const evolutionData = evolutionProcess.data;
+
+      let newData = {
+        detail: pokemonDetail,
+        species: res.data,
+        evolution: evolutionData,
+      };
+      setDetailPoke(newData);
+    } catch (error: AxiosError | unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response);
+      } else {
+        setError(error);
+      }
+    } finally {
+      setLoading(false);
+      setLoadingLoadMore(false);
+    }
+  };
+
+  return { loadMore, loadingLoadMore, fetchData, fetchSPecies };
 };
 
 export default useAxios;

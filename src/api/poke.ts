@@ -6,7 +6,7 @@ const getAllPoke: propsAxiosRequest = {
   isGetAllDetail: true,
 };
 
-const getPokeDetail = (id: string): propsAxiosRequest => ({
+const getPokeDetailById = (id: string): propsAxiosRequest => ({
   method: "GET",
   url: `/api/pokemon/${id}`,
 });
@@ -17,4 +17,14 @@ const searchPoke = (name: string): propsAxiosRequest => ({
   isSearch: true,
 });
 
-export { getAllPoke, getPokeDetail, searchPoke };
+const getSpecies = (name: string): propsAxiosRequest => ({
+  method: "GET",
+  url: `/api/pokemon-species/${name}`,
+});
+
+const getEvolution = (id: string): propsAxiosRequest => ({
+  method: "GET",
+  url: `/api/evolution-chain/${id}`,
+});
+
+export { getAllPoke, getPokeDetailById, searchPoke, getSpecies, getEvolution };

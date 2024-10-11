@@ -5,6 +5,7 @@ import { usePokemonContext } from "../context/PokeContext";
 import { useEffect } from "react";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
+import { PokeDetailInterface } from "../interfaces/pokeInterface";
 
 const Home = () => {
   const { loadMore, loadingLoadMore, fetchData } = useAxios();
@@ -34,7 +35,9 @@ const Home = () => {
     <section>
       <div className="gap-3 items-center justify-center grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
         {allPoke.length > 0 &&
-          allPoke.map((item: any) => <Card data={item} key={item.id} />)}
+          allPoke.map((item: PokeDetailInterface) => (
+            <Card data={item} key={item.id} />
+          ))}
       </div>
       {loadingLoadMore ? (
         <div className="flex justify-center mt-6">

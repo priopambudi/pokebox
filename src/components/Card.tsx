@@ -1,17 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { PokeDetailInterface } from "../interfaces/pokeInterface";
+interface CardProps {
+  data: PokeDetailInterface;
+}
 
-const Card = ({ data }: any) => {
+const Card = ({ data }: CardProps) => {
   const navigate = useNavigate();
 
-  const handleNavigate = (pokemon: any) => {
-    navigate("/detail/" + pokemon.id, { state: { pokemon } }); // Mengirimkan state saat navigasi
+  const handleNavigate = (pokemon: PokeDetailInterface) => {
+    navigate(`/detail/${pokemon.name}`, { state: { pokemon } });
   };
 
   return (
     <div
       onClick={() => handleNavigate(data)}
       id="card"
-      className="rounded-md hover:scale-105 transition-all"
+      className="rounded-md hover:scale-105 transition-all cursor-pointer"
     >
       <div className="bg-darkGray px-2 py-5 rounded-md">
         <p className="text-white text-center mb-2 font-semibold text-xl">
@@ -19,7 +23,7 @@ const Card = ({ data }: any) => {
         </p>
         <figure className="flex items-center">
           <img
-            src={data.sprites.other["official-artwork"].front_default}
+            src={data.sprites.other?.["official-artwork"].front_default}
             alt={data.name}
             width={100}
             className="mx-auto"
