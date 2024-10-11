@@ -33,3 +33,20 @@ body {
     var(--tw-backdrop-opacity) var(--tw-backdrop-saturate)
     var(--tw-backdrop-sepia);
 }
+
+.evolution-2::before {
+  content: "=>";
+  position: absolute;
+  color: white;
+  left: -5%;
+  top: 40%;
+  bottom: 0;
+}
+.evolution-3::before {
+  content: "=>";
+  position: absolute;
+  color: white;
+  left: -5%;
+  top: 40%;
+  bottom: 0;
+}

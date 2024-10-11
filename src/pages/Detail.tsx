@@ -1,43 +1,52 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CardDetail from "../components/CardDetail";
 import { Stat } from "../interfaces/pokeInterface";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useAxios from "../hooks/useAxios";
-import { getSpecies } from "../api/poke";
+import { getSpecies, searchPoke } from "../api/poke";
 import { usePokemonContext } from "../context/PokeContext";
 import Loading from "../components/Loading";
 
 const Detail = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const pokemon = location.state?.pokemon;
-  const { fetchSPecies } = useAxios();
+  const { fetchSPecies, fetchEvolution } = useAxios();
   const { name } = useParams();
   const { detailPoke, loading, error, setDetailPoke } = usePokemonContext();
+  const [evolution, setEvolution] = useState<any>(null);
 
   useEffect(() => {
     if (name) {
       fetchSPecies(getSpecies(name));
     }
-  }, [pokemon, name]);
+  }, [name]);
 
-  const getEvolutionChain = (evolutionChain: any) => {
-    const names: any = [];
+  useEffect(() => {
+    if (detailPoke) {
+      getEvolutionChain(detailPoke.evolution);
+    }
+  }, [detailPoke]);
 
-    const traverseChain = (chain: any) => {
+  const getEvolutionChain = async (evolutionChain: any) => {
+    const datas: any = [];
+
+    // Fungsi `traverseChain` harus mengembalikan Promise
+    const traverseChain = async (chain: any) => {
       if (chain.species) {
-        names.push(chain.species.name);
+        const data = await fetchEvolution(searchPoke(chain.species.name));
+        datas.push(...data);
       }
 
-      if (chain.evolves_to) {
-        chain.evolves_to.forEach((evo: any) => {
-          traverseChain(evo);
-        });
+      if (chain.evolves_to && chain.evolves_to.length > 0) {
+        // Gunakan `map` untuk memanggil `traverseChain` dan tunggu semua dengan `Promise.all`
+        await Promise.all(
+          chain.evolves_to.map((evo: any) => traverseChain(evo))
+        );
       }
     };
-    traverseChain(evolutionChain.chain);
 
-    return names;
+    await traverseChain(evolutionChain.chain);
+
+    setEvolution(datas);
   };
 
   if (loading)
@@ -54,7 +63,13 @@ const Detail = () => {
     <div>
       {detailPoke && (
         <>
-          <button className="text-white" onClick={() => navigate(-1)}>
+          <button
+            className="text-white"
+            onClick={() => {
+              navigate(-1);
+              setDetailPoke(null);
+            }}
+          >
             Back
           </button>
           <div className="grid grid-cols-1 md:grid-cols-2 mt-5 gap-4">
@@ -100,15 +115,27 @@ const Detail = () => {
                 <h3 className="text-white text-center mb-3">Evolusi</h3>
                 <div className="flex items-center justify-center">
                   <div>
-                    <p className="text-white">
-                      {getEvolutionChain(detailPoke.evolution).join(" => ")}
-                    </p>
+                    <p className="text-white">{}</p>
                   </div>
-                  {/* <div> */}
-                  {/* <figure>
-                      <img src={detailPoke.evolution.chain.species} alt="" />
-                    </figure> */}
-                  {/* </div> */}
+                  {evolution &&
+                    evolution.map((item: any, i: number) => (
+                      <div
+                        key={item.id}
+                        className={`evolution-${i + 1} relative`}
+                      >
+                        <figure className="w-8/12 mx-auto">
+                          <img
+                            src={
+                              item.sprites.other["official-artwork"]
+                                .front_default
+                            }
+                            alt={item.name}
+                            className="w-full"
+                          />
+                        </figure>
+                        <p className="text-white text-center">{item.name}</p>
+                      </div>
+                    ))}
                 </div>
               </CardDetail>
             </div>

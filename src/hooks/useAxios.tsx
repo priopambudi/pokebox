@@ -90,10 +90,11 @@ const useAxios = () => {
 
       const [detailResponse, evolutionProcess] = await Promise.all([
         axiosInstance(getPokeDetailById(res.data.id)),
-        axiosInstance(getEvolution(res.data.id)),
+        axiosInstance(getEvolution(res.data.evolution_chain.url.split("/")[6])),
       ]);
 
       const pokemonDetail = detailResponse.data;
+
       const evolutionData = evolutionProcess.data;
 
       let newData = {
@@ -114,7 +115,33 @@ const useAxios = () => {
     }
   };
 
-  return { loadMore, loadingLoadMore, fetchData, fetchSPecies };
+  const fetchEvolution = async (params: propsAxiosRequest) => {
+    setLoading(true);
+    setError(null);
+    const data: any = [];
+
+    try {
+      const res = await axiosInstance({
+        ...params,
+        signal: controller.signal,
+      });
+
+      data.push(res.data);
+    } catch (error: AxiosError | unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response);
+      } else {
+        setError(error);
+      }
+    } finally {
+      setLoading(false);
+      setLoadingLoadMore(false);
+    }
+
+    return data;
+  };
+
+  return { loadMore, loadingLoadMore, fetchData, fetchSPecies, fetchEvolution };
 };
 
 export default useAxios;
